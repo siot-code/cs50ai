@@ -69,6 +69,9 @@ def main():
     if target is None:
         sys.exit("Person not found.")
 
+
+    
+
     path = shortest_path(source, target)
 
     if path is None:
@@ -83,7 +86,6 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
-
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
@@ -92,9 +94,32 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO
-    raise NotImplementedError
+    # Initialize the frontier with the starting position
+    start = Node(state=source, parent=None, action=None)
+    frontier = QueueFrontier()
+    frontier.add(start)
 
+    # Initialize an empty explored set
+    explored = set()
+    while True:
+        if frontier.empty():
+            return None
+        
+        node = frontier.remove()
+        explored.add(node.state)
+
+        if node.state == target:
+            solution = []
+            while node.parent is not None:
+                solution.append((node.action, node.state))  # action is movie_id
+                node = node.parent
+            solution.reverse()
+            return solution
+        else:
+            for neighbour in neighbors_for_person(node.state):
+                if not frontier.contains_state(neighbour[1]) and neighbour[1] not in explored:
+                    child = Node(state=neighbour[1], parent=node, action=neighbour[0])  # action is movie_id
+                    frontier.add(child)
 
 def person_id_for_name(name):
     """
@@ -130,8 +155,9 @@ def neighbors_for_person(person_id):
     movie_ids = people[person_id]["movies"]
     neighbors = set()
     for movie_id in movie_ids:
-        for person_id in movies[movie_id]["stars"]:
-            neighbors.add((movie_id, person_id))
+        for star_id in movies[movie_id]["stars"]:
+            if star_id != person_id:
+                neighbors.add((movie_id, star_id))
     return neighbors
 
 
