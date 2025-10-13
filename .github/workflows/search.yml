@@ -1,0 +1,15 @@
+name: Search Project Tests
+
+on:
+  push:
+    paths:
+      - 'search/**'
+  pull_request:
+    paths:
+      - 'search/**'
+
+jobs:
+  call-tests:
+    uses: ./.github/workflows/test-template.yml
+    with:
+      test-path: search/test
