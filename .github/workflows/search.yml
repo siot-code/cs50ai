@@ -12,4 +12,4 @@ jobs:
   call-tests:
     uses: ./.github/workflows/test-template.yml
     with:
-      test-path: search/test
+      test-path: search/degrees/test
